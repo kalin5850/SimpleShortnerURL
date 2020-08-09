@@ -1,0 +1,24 @@
+{
+    "name": "kai/symphox",
+    "description": "Symphox assessment test",
+    "license": "Kail",
+    "authors": [
+        {
+            "name": "Kail",
+            "email": "kalin5850@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "test\\": "src/Fruits",
+            "src\\": "src/Veges",
+            "db\\": "src/DB",
+            "shorturl\\": "src/Shorturl"
+        }
+    },
+  "require": {
+    "ext-pdo": "*",
+    "ext-mysqli": "*",
+        "vlucas/phpdotenv": "^5.1"
+  }
+}

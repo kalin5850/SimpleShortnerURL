@@ -1,0 +1,57 @@
+version: '3.7'
+
+networks:
+    symphoxnet:
+        ipam:
+            config:
+                - subnet: 172.23.0.0/16
+
+services:
+    nginx:
+        image: nginx:latest
+        container_name: ${APP_NAME:?err}-nginx
+        ports:
+            - '80:80'
+           # - '443:443'
+        links:
+            - 'php'
+        volumes:
+            - './app:/var/www/html'
+            - './config/nginx:/etc/nginx/conf.d'
+        networks:
+            symphoxnet:
+                ipv4_address: 172.23.0.4
+
+    php:
+        # image: php:7.4-fpm
+        build:
+            context: ./docker
+            dockerfile: php.Dockerfile
+        container_name: ${APP_NAME:?err}-php
+        working_dir: /var/www/html
+        links:
+          - mariadb
+        volumes:
+            - './app:/var/www/html'
+        ports:
+            - "9074:9000"
+        networks:
+            symphoxnet:
+                ipv4_address: 172.23.0.2
+
+    mariadb:
+        image: mariadb/server:10.4
+        container_name: ${APP_NAME:?err}-mariadb
+        restart: 'on-failure'
+        environment:
+            MARIADB_ALLOW_EMPTY_PASSWORD: "no"
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?err}
+            MARIADB_DATABASE: "api_db"
+        volumes:
+            - ./database:/var/lib/mysql:rw
+        ports:
+            - "33074:3306"
+        networks:
+            symphoxnet:
+                ipv4_address: 172.23.0.3
+
